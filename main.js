@@ -1,6 +1,6 @@
-/* ===========================
-   WOLFMIND — MAIN JS
-   =========================== */
+/* ======================================
+   WOLF MIND HYPNOTHERAPY — MAIN JS
+   ====================================== */
 
 // ---- Nav scroll effect ----
 const nav = document.getElementById('nav');
@@ -10,7 +10,7 @@ window.addEventListener('scroll', () => {
 
 // ---- Mobile hamburger ----
 const hamburger = document.getElementById('hamburger');
-const navLinks = document.getElementById('nav-links');
+const navLinks  = document.getElementById('nav-links');
 
 hamburger.addEventListener('click', () => {
   const isOpen = navLinks.classList.toggle('open');
@@ -18,7 +18,6 @@ hamburger.addEventListener('click', () => {
   document.body.style.overflow = isOpen ? 'hidden' : '';
 });
 
-// Close nav on link click
 navLinks.querySelectorAll('a').forEach(link => {
   link.addEventListener('click', () => {
     navLinks.classList.remove('open');
@@ -28,27 +27,25 @@ navLinks.querySelectorAll('a').forEach(link => {
 });
 
 // ---- Scroll reveal ----
-const revealEls = document.querySelectorAll(
-  '.service-card, .case-card, .process__step, .testimonial, .team-member, .section-header, .hero__stats'
+const revealTargets = document.querySelectorAll(
+  '.help-card, .pillar, .faq__item, .about__image-wrap, .about__copy, ' +
+  '.approach__copy, .approach__pillars, .contact__copy, .contact-form, ' +
+  '.section-header, .tagline-band__text, .reassure-item'
 );
 
-revealEls.forEach(el => el.classList.add('reveal'));
+revealTargets.forEach(el => el.classList.add('reveal'));
 
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach((entry, i) => {
-    if (entry.isIntersecting) {
-      // Stagger sibling elements
-      const siblings = [...entry.target.parentElement.children];
-      const idx = siblings.indexOf(entry.target);
-      setTimeout(() => {
-        entry.target.classList.add('visible');
-      }, idx * 80);
-      observer.unobserve(entry.target);
-    }
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    const siblings = [...entry.target.parentElement.children];
+    const idx = siblings.indexOf(entry.target);
+    setTimeout(() => entry.target.classList.add('visible'), idx * 70);
+    revealObserver.unobserve(entry.target);
   });
-}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+}, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
 
-revealEls.forEach(el => observer.observe(el));
+revealTargets.forEach(el => revealObserver.observe(el));
 
 // ---- Contact form ----
 const form = document.getElementById('contact-form');
@@ -57,41 +54,20 @@ form.addEventListener('submit', (e) => {
 
   const btn = form.querySelector('button[type="submit"]');
   const original = btn.textContent;
-
   btn.textContent = 'Sending…';
   btn.disabled = true;
 
-  // Simulate async submission
   setTimeout(() => {
-    btn.textContent = 'Message sent!';
-    btn.style.background = '#10b981';
-    btn.style.borderColor = '#10b981';
+    btn.textContent = 'Enquiry sent — thank you';
+    btn.style.background = '#2d6a4f';
+    btn.style.borderColor = '#2d6a4f';
+    btn.style.color = '#d8f3dc';
     form.reset();
 
     setTimeout(() => {
       btn.textContent = original;
-      btn.style.background = '';
-      btn.style.borderColor = '';
+      btn.style.cssText = '';
       btn.disabled = false;
-    }, 3000);
+    }, 4000);
   }, 1200);
 });
-
-// ---- Smooth active nav highlighting ----
-const sections = document.querySelectorAll('section[id]');
-const navAnchors = document.querySelectorAll('.nav__links a:not(.btn)');
-
-const sectionObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      const id = entry.target.id;
-      navAnchors.forEach(a => {
-        a.style.color = a.getAttribute('href') === `#${id}`
-          ? 'var(--clr-white)'
-          : '';
-      });
-    }
-  });
-}, { threshold: 0.4 });
-
-sections.forEach(s => sectionObserver.observe(s));
